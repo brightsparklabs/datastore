@@ -1,4 +1,4 @@
-# filestore
+# Filestore
 
 [ ![Download](https://api.bintray.com/packages/brightsparklabs/java/filestore/images/download.svg) ](https://bintray.com/brightsparklabs/java/filestore/_latestVersion)
 

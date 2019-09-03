@@ -1,0 +1,119 @@
+/*
+ * Created by brightSPARK Labs
+ * www.brightsparklabs.com
+ */
+
+// -----------------------------------------------------------------------------
+// PLUGINS
+// -----------------------------------------------------------------------------
+
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+
+    // Apply the groovy plugin to also add support for Groovy (needed for Spock)
+    id 'groovy'
+
+    // Apply the spotbugs plugin for code quality
+    id 'com.github.spotbugs' version '2.0.0'
+
+    // Apply the jacoco plugin for test coverage
+    id 'jacoco'
+
+    // Apply the annotation processing plugins
+    id "net.ltgt.apt" version "0.21"
+    id "net.ltgt.apt-idea" version "0.21"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// -----------------------------------------------------------------------------
+// PROJECT IDENTIFICATION
+// -----------------------------------------------------------------------------
+
+project.description = 'Filestore'
+project.ext.url = 'https://bitbucket.org/brightsparklabs/com.brightsparklabs.filestore'
+project.ext.scm = 'scm:git@bitbucket.org:brightsparklabs/com.brightsparklabs.filestore.git'
+project.group = 'com.brightsparklabs'
+project.version = 'git describe --always --dirty'.execute().text.trim()
+
+// -----------------------------------------------------------------------------
+// REPOSITORIES/DEPENDENCIES
+// -----------------------------------------------------------------------------
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+
+dependencies {
+    def versions = [
+            immutablesVersion: '2.7.4',
+    ]
+
+    // This dependency is exported to consumers, that is to say found on their compile classpath.
+    implementation(
+            // General
+            'com.google.guava:guava:27.0.1-jre',
+    )
+
+    compileOnly(
+            "org.immutables:value:${versions.immutablesVersion}",
+    )
+
+    testImplementation(
+            // Use the awesome Spock testing and specification framework even with Java
+            'org.spockframework:spock-core:1.2-groovy-2.5',
+            'junit:junit:4.12',
+            // Allow spock to mock non-interfaces
+            'net.bytebuddy:byte-buddy:1.10.1',
+
+            // So that we can suppress some spotbugs reports
+            'com.github.spotbugs:spotbugs-annotations:3.1.12',
+    )
+
+    annotationProcessor(
+            "org.immutables:value:${versions.immutablesVersion}",
+    )
+}
+
+// -----------------------------------------------------------------------------
+// GENERATED CODE CONFIG
+// -----------------------------------------------------------------------------
+
+ext {
+    generatedSourcesDir = 'build/generated/source/apt/main'
+}
+
+dependencies {
+    // We add this so that Immutables will annotate its generated classes with
+    // @SuppressFBWarnings, and thus avoid FindBugs/SpotBugs errors for those generated classes.
+    compileOnly group: 'com.google.code.findbugs', name: 'annotations', version: '3.0.1'
+}
+
+sourceSets {
+    main.java.srcDirs += generatedSourcesDir
+}
+
+// -----------------------------------------------------------------------------
+// GENERATE CODE QUALITY REPORT (via spotbugs)
+// -----------------------------------------------------------------------------
+
+tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+// -----------------------------------------------------------------------------
+// GENERATE CODE COVERAGE REPORT (via jacoco)
+// -----------------------------------------------------------------------------
+
+jacocoTestReport {
+    reports {
+        html.enabled = true
+    }
+}
