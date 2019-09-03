@@ -2,7 +2,7 @@
  * Created by brightSPARK Labs
  * www.brightsparklabs.com
  */
-package com.brightsparklabs.filestore;
+package com.brightsparklabs.datastore;
 
 import com.google.common.io.ByteSource;
 

@@ -3,4 +3,4 @@
  * www.brightsparklabs.com
  */
 
-rootProject.name = 'com.brightsparklabs.filestore'
+rootProject.name = 'datastore'

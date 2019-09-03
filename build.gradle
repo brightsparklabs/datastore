@@ -32,9 +32,9 @@ targetCompatibility = 1.8
 // PROJECT IDENTIFICATION
 // -----------------------------------------------------------------------------
 
-project.description = 'Filestore'
-project.ext.url = 'https://bitbucket.org/brightsparklabs/com.brightsparklabs.filestore'
-project.ext.scm = 'scm:git@bitbucket.org:brightsparklabs/com.brightsparklabs.filestore.git'
+project.description = 'Datastore'
+project.ext.url = 'https://bitbucket.org/brightsparklabs/datastore'
+project.ext.scm = 'scm:git@bitbucket.org:brightsparklabs/datastore.git'
 project.group = 'com.brightsparklabs'
 project.version = 'git describe --always --dirty'.execute().text.trim()
 
