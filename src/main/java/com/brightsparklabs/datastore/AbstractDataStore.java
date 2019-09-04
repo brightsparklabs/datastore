@@ -8,6 +8,7 @@ package com.brightsparklabs.datastore;
 import com.google.common.io.Files;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -38,13 +39,13 @@ public abstract class AbstractDataStore implements DataStore
     // -------------------------------------------------------------------------
 
     @Override
-    public String put(final Path file)
+    public String put(final Path file) throws IOException
     {
         return put(Files.asByteSource(file.toFile()));
     }
 
     @Override
-    public String put(final File file)
+    public String put(final File file) throws IOException
     {
         return put(Files.asByteSource(file));
     }

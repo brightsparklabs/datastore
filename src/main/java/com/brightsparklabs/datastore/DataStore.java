@@ -52,7 +52,7 @@ public interface DataStore
      *
      * @return Unique identifier for retrieving the data via {@link #get(String)}.
      */
-    String put(ByteSource source);
+    String put(ByteSource source) throws IOException;
 
     /**
      * Stores the data from the specified file into the store.
