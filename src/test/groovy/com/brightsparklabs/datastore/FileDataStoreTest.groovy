@@ -12,43 +12,25 @@ import java.nio.file.Paths
  * Unit tests for {@link FileDataStore}.
  */
 class FileDataStoreTest extends Specification {
-    def "put and get 3 directory levels"() {
+    def "put and get all directory levels"() {
         setup:
-        int expectedLevels = 3
         String expectedContents = "Hello World"
         ByteSource sourceData = ByteSource.wrap(expectedContents.bytes)
 
+        when:
         Path baseDir = createTempDir()
         FileDataStore fileDataStore = new FileDataStore(
-                ImmutableFileDataStoreConfiguration.builder().baseDirectory(baseDir).levels(expectedLevels).build())
-
-        when:
+                ImmutableFileDataStoreConfiguration.builder().baseDirectory(baseDir).levels(level).build())
         String uuid = fileDataStore.put(sourceData)
         ByteSource getResult = fileDataStore.get(uuid)
 
         then:
-        Path expectedFile = getExpectedFile(fileDataStore, uuid)
-        getExpectedDirectoryLevels(expectedFile, baseDir) == expectedLevels
+        Path expectedFile = fileDataStore.getPath(uuid)
+        getExpectedDirectoryLevels(expectedFile, baseDir) == level
         checkExpectedFile(expectedFile, expectedContents, getResult)
-    }
 
-    def "put and get 5 directory levels"() {
-        setup:
-        int expectedLevels = 5
-        String expectedContents = "Hello World"
-        ByteSource sourceData = ByteSource.wrap(expectedContents.bytes)
-        Path baseDir = createTempDir()
-        FileDataStore fileDataStore = new FileDataStore(
-                ImmutableFileDataStoreConfiguration.builder().baseDirectory(baseDir).levels(expectedLevels).build())
-
-        when:
-        String uuid = fileDataStore.put(sourceData)
-        ByteSource getResult = fileDataStore.get(uuid)
-
-        then:
-        Path expectedFile = getExpectedFile(fileDataStore, uuid)
-        getExpectedDirectoryLevels(expectedFile, baseDir) == expectedLevels
-        checkExpectedFile(expectedFile, expectedContents, getResult)
+        where:
+        level << [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     }
 
     def "get FileNotFound"() {
@@ -63,46 +45,86 @@ class FileDataStoreTest extends Specification {
         thrown FileNotFoundException
     }
 
-    def "getPath default 3 directory levels"() {
-        setup:
+    def "getPath all directory levels"() {
+        when:
         FileDataStore fileDataStore = new FileDataStore(
-                ImmutableFileDataStoreConfiguration.builder().baseDirectory(Paths.get("/")).build())
+                ImmutableFileDataStoreConfiguration.builder().baseDirectory(Paths.get("/")).levels(level).build())
 
-        expect:
+        then:
         fileDataStore.getPath(uuid).toString() == path
 
         where:
-        uuid                                   | path
-        "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14"
-        "7AA4145F-53A5-4F8F-B30A-125EFE697DD2" | "/7A/A4/14"
+        level || uuid                                   | path
+        1     || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        2     || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        3     || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        4     || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        5     || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        6     || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        7     || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        8     || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/8f/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        9     || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/8f/b3/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        10    || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/8f/b3/0a/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        11    || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/8f/b3/0a/12/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        12    || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/8f/b3/0a/12/5e/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        13    || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/8f/b3/0a/12/5e/fe/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        14    || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/8f/b3/0a/12/5e/fe/69/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        15    || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/8f/b3/0a/12/5e/fe/69/7d/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
+        16    || "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53/a5/4f/8f/b3/0a/12/5e/fe/69/7d/d2/7aa4145f-53a5-4f8f-b30a-125efe697dd2"
     }
 
-    def "getPath 5 directory levels"() {
+    def "put null check"() {
         setup:
-        FileDataStore fileDataStore = new FileDataStore(
-                ImmutableFileDataStoreConfiguration.builder().baseDirectory(Paths.get("/")).levels(5).build())
-
-        expect:
-        fileDataStore.getPath(uuid).toString() == path
-
-        where:
-        uuid                                   | path
-        "7aa4145f-53a5-4f8f-b30a-125efe697dd2" | "/7a/a4/14/5f/53"
-        "7AA4145F-53A5-4F8F-B30A-125EFE697DD2" | "/7A/A4/14/5F/53"
-    }
-
-    def "getPath invalid UUID"() {
-        setup:
-        final uuid = "not-a-uuid"
         FileDataStore fileDataStore = new FileDataStore(
                 ImmutableFileDataStoreConfiguration.builder().baseDirectory(Paths.get("/")).build())
 
         when:
-        fileDataStore.getPath(uuid)
+        fileDataStore.put(null)
 
         then:
-        IllegalArgumentException ex = thrown()
-        ex.message == String.format("Provided id [%s] is not a valid UUID", uuid)
+        thrown(NullPointerException)
+    }
+
+    def "get invalid inputs"() {
+        setup:
+        FileDataStore fileDataStore = new FileDataStore(
+                ImmutableFileDataStoreConfiguration.builder().baseDirectory(Paths.get("/")).build())
+
+        when:
+        fileDataStore.get(id)
+
+        then:
+        thrown(expectedException)
+
+        where:
+        id                                          || expectedException
+        "7xx4145x-53a5-4f8f-b30a-125efe697dd2"      || IllegalArgumentException
+        "7aa4145f"                                  || IllegalArgumentException
+        "7aa4145f-53a5-4f8f-b30a-125efe697dd2-b30a" || IllegalArgumentException
+        "  "                                        || IllegalArgumentException
+        ""                                          || IllegalArgumentException
+        null                                        || NullPointerException
+    }
+
+    def "getPath invalid inputs"() {
+        setup:
+        FileDataStore fileDataStore = new FileDataStore(
+                ImmutableFileDataStoreConfiguration.builder().baseDirectory(Paths.get("/")).build())
+
+        when:
+        fileDataStore.getPath(id)
+
+        then:
+        thrown(expectedException)
+
+        where:
+        id                                          || expectedException
+        "7xx4145x-53a5-4f8f-b30a-125efe697dd2"      || IllegalArgumentException
+        "7aa4145f"                                  || IllegalArgumentException
+        "7aa4145f-53a5-4f8f-b30a-125efe697dd2-b30a" || IllegalArgumentException
+        "  "                                        || IllegalArgumentException
+        ""                                          || IllegalArgumentException
+        null                                        || NullPointerException
     }
 
     def "ImmutableFileDataStoreConfiguration no base directory specified"() {
@@ -134,7 +156,7 @@ class FileDataStoreTest extends Specification {
     }
 
     private int getExpectedDirectoryLevels(Path path, Path baseDir) {
-        return path.parent.toString().replace(baseDir.toString() + "/", "").split("/").size()
+        return path.getParent().toString().replace(baseDir.toString() + "/", "").split("/").size()
     }
 
     private Path getExpectedFile(fileDataStore, String uuid) {
@@ -147,6 +169,8 @@ class FileDataStoreTest extends Specification {
     }
 
     private Path createTempDir() {
-        return java.nio.file.Files.createTempDirectory("FileDataStoreTest")
+        final Path tempDir = java.nio.file.Files.createTempDirectory("FileDataStoreTest")
+        tempDir.toFile().deleteOnExit()
+        return tempDir
     }
 }

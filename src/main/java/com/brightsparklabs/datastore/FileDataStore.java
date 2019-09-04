@@ -5,17 +5,20 @@
 package com.brightsparklabs.datastore;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import org.immutables.value.Value;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.UUID;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
  * A {@link DataStore} which stores data in files.
@@ -72,8 +75,11 @@ public class FileDataStore extends AbstractDataStore
     @Override
     public ByteSource get(final String id) throws FileNotFoundException
     {
+        Objects.requireNonNull(id);
+        checkArgument(!id.isEmpty(), "Id must not be empty");
+
         // Get file path from UUID
-        final Path filePath = Paths.get(getPath(id).toString(), id);
+        final Path filePath = getPath(id);
 
         if (!java.nio.file.Files.exists(filePath))
         {
@@ -94,16 +100,17 @@ public class FileDataStore extends AbstractDataStore
      */
     public String put(final ByteSource source) throws IOException
     {
+        Objects.requireNonNull(source);
+
         // Generate UUID and associated path
         final String uuid = UUID.randomUUID().toString();
-        final Path path = getPath(uuid);
+        final Path destinationFile = getPath(uuid);
 
         // Create all parent directories
-        java.nio.file.Files.createDirectories(path);
+        java.nio.file.Files.createDirectories(destinationFile.getParent());
 
         // Write data to destination file
-        final File destinationFile = Paths.get(path.toString(), uuid).toFile();
-        ByteSink sink = Files.asByteSink(destinationFile);
+        final ByteSink sink = Files.asByteSink(destinationFile.toFile());
         source.copyTo(sink);
         return uuid;
     }
@@ -113,15 +120,18 @@ public class FileDataStore extends AbstractDataStore
     // -------------------------------------------------------------------------
 
     /**
-     * Returns the directory path corresponding to the specified UUID.
+     * Returns the file corresponding to the specified id.
      *
      * @param id
-     *         The UUID used to compute the directory path.
+     *         Unique identifier of the file to retrieve.
      *
-     * @return The directory path corresponding to the specified UUID.
+     * @return The file corresponding to the specified id.
      */
     public Path getPath(String id)
     {
+        Objects.requireNonNull(id);
+        checkArgument(!id.isEmpty(), "Id must not be empty");
+
         if (!id.matches(UUID_REGEX))
         {
             throw new IllegalArgumentException(String.format("Provided id [%s] is not a valid UUID",
@@ -136,12 +146,14 @@ public class FileDataStore extends AbstractDataStore
         String normalisedId = id.replaceAll("-", "");
 
         // Compute directory path from normalised UUID
-        final String[] dirs = new String[levels];
+        final String[] dirs = new String[levels + 1];
         for (int i = 0; i < levels; i++)
         {
             dirs[i] = normalisedId.substring(0, DIR_LEVEL_CHARS);
             normalisedId = normalisedId.substring(DIR_LEVEL_CHARS);
         }
+
+        dirs[levels] = id;
 
         return Paths.get(baseDirectory.toString(), dirs);
     }
