@@ -1,12 +1,22 @@
-# Filestore
+# Datastore
 
-[ ![Download](https://api.bintray.com/packages/brightsparklabs/java/filestore/images/download.svg) ](https://bintray.com/brightsparklabs/java/filestore/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/brightsparklabs/maven/datastore/images/download.svg) ](https://bintray.com/brightsparklabs/maven/datastore/_latestVersion)
 
 A standardised means to store large amounts of files into a store.
 
 # Usage
 
-TBD
+```java
+final FileDataStore fileDataStore = new FileDataStore(
+        ImmutableFileDataStoreConfiguration
+            .builder()
+            .baseDirectory(Paths.get("/")
+            .build());
+
+final String id = fileDataStore.put(data);
+final ByteSource retrievedData = fileDataStore.get(id);
+final Path backingFile = fileDataStore.getPath(id);
+```
 
 # Development
 
