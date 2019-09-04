@@ -112,7 +112,11 @@ public class FileDataStore extends AbstractDataStore
         final Path destinationFile = getPath(uuid);
 
         // Create all parent directories
-        java.nio.file.Files.createDirectories(destinationFile.getParent());
+        final Path parent = destinationFile.getParent();
+        if (parent != null)
+        {
+            java.nio.file.Files.createDirectories(parent);
+        }
 
         // Write data to destination file
         final ByteSink sink = Files.asByteSink(destinationFile.toFile());
