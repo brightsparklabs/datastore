@@ -1,3 +1,8 @@
+/*
+ * Created by brightSPARK Labs
+ * www.brightsparklabs.com
+ */
+
 package com.brightsparklabs.datastore
 
 import com.google.common.base.Charsets
@@ -10,6 +15,8 @@ import java.nio.file.Paths
 
 /**
  * Unit tests for {@link FileDataStore}.
+ *
+ * @author brightSPARK Labs
  */
 class FileDataStoreTest extends Specification {
     def "put and get all directory levels"() {

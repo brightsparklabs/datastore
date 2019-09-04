@@ -5,6 +5,7 @@
 package com.brightsparklabs.datastore;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
@@ -14,8 +15,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -32,6 +35,9 @@ public class FileDataStore extends AbstractDataStore
 
     /** The number of characters used to represent a directory level */
     private static final int DIR_LEVEL_CHARS = 2;
+
+    /** Splitter for breaking ids into directories */
+    private static final Splitter ID_SPLITTER = Splitter.fixedLength(DIR_LEVEL_CHARS);
 
     /** The regex used to verify the format of a UUID */
     private static final String UUID_REGEX
@@ -141,18 +147,12 @@ public class FileDataStore extends AbstractDataStore
         final int levels = this.configuration.getLevels();
         final Path baseDirectory = this.configuration.getBaseDirectory();
 
-        // Normalise UUID
-        String normalisedId = id.replaceAll("-", "");
-
         // Compute directory path from normalised UUID
-        final String[] dirs = new String[levels + 1];
-        for (int i = 0; i < levels; i++)
-        {
-            dirs[i] = normalisedId.substring(0, DIR_LEVEL_CHARS);
-            normalisedId = normalisedId.substring(DIR_LEVEL_CHARS);
-        }
-
-        dirs[levels] = id;
+        final String normalisedId = id.replaceAll("-", "");
+        final List<String> splitId = ID_SPLITTER.splitToList(normalisedId);
+        final List<String> idDirs = splitId.stream().limit(levels).collect(Collectors.toList());
+        idDirs.add(id);
+        String[] dirs = idDirs.toArray(new String[idDirs.size()]);
 
         return Paths.get(baseDirectory.toString(), dirs);
     }
