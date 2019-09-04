@@ -5,6 +5,7 @@
 package com.brightsparklabs.datastore;
 
 import com.google.common.io.ByteSource;
+import org.immutables.value.Value;
 
 import java.nio.file.Path;
 
@@ -30,6 +31,25 @@ public class FileDataStore extends AbstractDataStore
     // -------------------------------------------------------------------------
     // CONSTRUCTION
     // -------------------------------------------------------------------------
+
+    /**
+     * Default constructor.
+     */
+    public FileDataStore()
+    {
+        this(ImmutableFileDataStoreConfiguration.builder().build());
+    }
+
+    /**
+     * Creates a new instance from the supplied configuration.
+     *
+     * @param configuration
+     *         Configuration for the store.
+     */
+    public FileDataStore(final Configuration configuration)
+    {
+        // TODO
+    }
 
     // -------------------------------------------------------------------------
     // IMPLEMENTATION: DataStore
@@ -58,7 +78,6 @@ public class FileDataStore extends AbstractDataStore
      *
      * @return Unique identifier for retrieving the data via {@link #get(String)}.
      */
-    @Override
     public String put(final ByteSource source)
     {
         // TODO
@@ -86,4 +105,36 @@ public class FileDataStore extends AbstractDataStore
     // -------------------------------------------------------------------------
     // PRIVATE METHODS
     // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // INNER CLASSES
+    // -------------------------------------------------------------------------
+
+    @Value.Immutable
+    @Value.Style(typeImmutable = "ImmutableFileDataStore*")
+    public static abstract class Configuration
+    {
+        // ---------------------------------------------------------------------
+        // CONSTANTS
+        // ---------------------------------------------------------------------
+
+        /** Default number of directory levels to use for nesting files */
+        private static final int DEFAULT_LEVELS = 3;
+
+        // ---------------------------------------------------------------------
+        // PUBLIC METHODS
+        // ---------------------------------------------------------------------
+
+        /**
+         * Returns the number of directory levels to use for nesting files. Defaults to {@link
+         * #DEFAULT_LEVELS}.
+         *
+         * @return The number of directory levels to use for nesting files.
+         */
+        @Value.Default
+        int getLevels()
+        {
+            return DEFAULT_LEVELS;
+        }
+    }
 }
