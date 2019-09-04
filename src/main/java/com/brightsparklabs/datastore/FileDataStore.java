@@ -5,7 +5,6 @@
 package com.brightsparklabs.datastore;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
@@ -18,7 +17,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * A {@link DataStore} which stores data in files.
@@ -83,7 +82,7 @@ public class FileDataStore extends AbstractDataStore
 
         if (!java.nio.file.Files.exists(filePath))
         {
-            throw new FileNotFoundException(String.format("The file at [%s] could not be found",
+            throw new FileNotFoundException(String.format("The id [%s] does not match any files",
                     filePath.toString()));
         }
 
@@ -134,7 +133,7 @@ public class FileDataStore extends AbstractDataStore
 
         if (!id.matches(UUID_REGEX))
         {
-            throw new IllegalArgumentException(String.format("Provided id [%s] is not a valid UUID",
+            throw new IllegalArgumentException(String.format("Supplied id [%s] is not a valid UUID",
                     id));
         }
 
@@ -200,14 +199,15 @@ public class FileDataStore extends AbstractDataStore
         abstract Path getBaseDirectory();
 
         /**
-         * Ensures that the configured number of levels is less than or equal to {@link
-         * #MAX_LEVELS}.
+         * Ensures that the configured number of levels is less than or equal to {@link #MAX_LEVELS}
+         * and greater than 0.
          */
         @Value.Check
         protected void checkDirLevel()
         {
-            Preconditions.checkState(getLevels() <= MAX_LEVELS,
-                    "Number of directory levels must be less than or equal to " + MAX_LEVELS);
+            final int levels = getLevels();
+            Preconditions.checkState((0 < levels) && (levels <= MAX_LEVELS),
+                    "Number of directory levels must be between [0-" + MAX_LEVELS + "]");
         }
     }
 }

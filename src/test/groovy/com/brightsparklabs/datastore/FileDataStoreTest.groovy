@@ -119,6 +119,7 @@ class FileDataStoreTest extends Specification {
 
         where:
         id                                          || expectedException
+        "7aa4145f-53a5-4f8f-b30a-125efe697dd2.zip"  || IllegalArgumentException
         "7xx4145x-53a5-4f8f-b30a-125efe697dd2"      || IllegalArgumentException
         "7aa4145f"                                  || IllegalArgumentException
         "7aa4145f-53a5-4f8f-b30a-125efe697dd2-b30a" || IllegalArgumentException
@@ -136,13 +137,19 @@ class FileDataStoreTest extends Specification {
         ex.message == "Cannot build Configuration, some of required attributes are not set [baseDirectory]"
     }
 
-    def "ImmutableFileDataStoreConfiguration exceeds max levels"() {
+    def "ImmutableFileDataStoreConfiguration invalid levels"() {
         when:
-        ImmutableFileDataStoreConfiguration.builder().baseDirectory(Paths.get("/")).levels(18).build()
+        ImmutableFileDataStoreConfiguration.builder()
+                .baseDirectory(Paths.get("/"))
+                .levels(levels)
+                .build()
 
         then:
         IllegalStateException ex = thrown()
-        ex.message == "Number of directory levels must be less than or equal to 16"
+        ex.message == "Number of directory levels must be between [0-16]"
+
+        where:
+        levels << [Integer.MIN_VALUE, -1, 0, 17, Integer.MAX_VALUE]
     }
 
     // -------------------------------------------------------------------------
