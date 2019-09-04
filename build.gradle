@@ -37,10 +37,10 @@ targetCompatibility = 1.8
 // -----------------------------------------------------------------------------
 
 project.description = 'Library for storing/retrieving data by id into a backing store'
-project.ext.url = 'https://bitbucket.org/brightsparklabs/datastore'
-project.ext.scm = 'scm:git@bitbucket.org:brightsparklabs/datastore.git'
-project.group = 'com.brightsparklabs'
-project.version = 'git describe --always --dirty'.execute().text.trim()
+project.ext.url     = 'https://github.com/brightsparklabs/datastore'
+project.ext.scm     = 'https://github.com/brightsparklabs/datastore.git'
+project.group       = 'com.brightsparklabs'
+project.version     = 'git describe --always --dirty'.execute().text.trim()
 
 // -----------------------------------------------------------------------------
 // REPOSITORIES/DEPENDENCIES
