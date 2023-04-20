@@ -27,10 +27,13 @@ plugins {
     // Apply bintray plugin for publishing artifacts
     id "com.jfrog.bintray" version "1.8.4"
     id "maven-publish"
+
+    // Apply the brightSPARK Labs plugin for standardisation.
+    id "com.brightsparklabs.gradle.baseline" version "3.1.0"
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
 
 // -----------------------------------------------------------------------------
 // PROJECT IDENTIFICATION
@@ -49,7 +52,7 @@ project.version     = 'git describe --always --dirty'.execute().text.trim()
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -107,8 +110,8 @@ sourceSets {
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
-        xml.enabled = false
-        html.enabled = true
+        xml.required = false
+        html.required = true
     }
 }
 
