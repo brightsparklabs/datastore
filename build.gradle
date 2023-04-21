@@ -20,16 +20,7 @@ plugins {
     // Apply the jacoco plugin for test coverage
     id 'jacoco'
 
-    // Apply the annotation processing plugins
-    id "net.ltgt.apt" version "0.21"
-    id "net.ltgt.apt-idea" version "0.21"
-
-    // Apply bintray plugin for publishing artifacts
-    id "com.jfrog.bintray" version "1.8.5"
     id "maven-publish"
-
-    // Apply the brightSPARK Labs plugin for standardisation.
-    id "com.brightsparklabs.gradle.baseline" version "3.1.0"
 }
 
 sourceCompatibility = 17
@@ -50,20 +41,19 @@ project.version     = 'git describe --always --dirty'.execute().text.trim()
 // -----------------------------------------------------------------------------
 
 repositories {
-    // Use jcenter for resolving dependencies.
-    // You can declare any Maven/Ivy/file repository here.
+    // Use mavenCentral for resolving dependencies.
     mavenCentral()
 }
 
 dependencies {
     def versions = [
-            immutablesVersion: '2.7.4',
+            immutablesVersion: '2.9.3',
     ]
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     implementation(
             // General
-            'com.google.guava:guava:27.0.1-jre',
+            'com.google.guava:guava:23.0',
     )
 
     compileOnly(
@@ -72,7 +62,7 @@ dependencies {
 
     testImplementation(
             // Use the awesome Spock testing and specification framework even with Java
-            'org.spockframework:spock-core:1.2-groovy-2.5',
+            'org.spockframework:spock-core:0.3',
             'junit:junit:4.13.2',
             // Allow spock to mock non-interfaces
             'net.bytebuddy:byte-buddy:1.14.4',
@@ -110,23 +100,15 @@ sourceSets {
 
 spotbugsMain {
     reports {
-        html {
-            required = true
-        }
-        xml {
-            required = false
-        }
+        html.required = true
+        xml.required = false
     }
 }
 
 spotbugsTest {
     reports {
-        html {
-            required = true
-        }
-        xml {
-            required = false
-        }
+        html.required = true
+        xml.required = false
     }
 }
 
@@ -136,32 +118,7 @@ spotbugsTest {
 
 jacocoTestReport {
     reports {
-        html {
-            required = true
-        }
-    }
-}
-// -----------------------------------------------------------------------------
-// PUBLISH ARTIFACTS (via bintray)
-// -----------------------------------------------------------------------------
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['Publication']
-    override = true
-    publish = true
-    pkg {
-        repo = 'maven'
-        name = project.name
-        userOrg = 'brightsparklabs'
-        licenses = ['MIT']
-        vcsUrl = project.ext.url
-        version {
-            name = project.version
-            vcsTag = project.version
-            released = new Date()
-        }
+        html.required = true
     }
 }
 
