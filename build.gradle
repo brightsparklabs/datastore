@@ -15,7 +15,7 @@ plugins {
     id 'groovy'
 
     // Apply the spotbugs plugin for code quality
-    id 'com.github.spotbugs' version '2.0.0'
+    id 'com.github.spotbugs' version '5.0.14'
 
     // Apply the jacoco plugin for test coverage
     id 'jacoco'
@@ -25,7 +25,7 @@ plugins {
     id "net.ltgt.apt-idea" version "0.21"
 
     // Apply bintray plugin for publishing artifacts
-    id "com.jfrog.bintray" version "1.8.4"
+    id "com.jfrog.bintray" version "1.8.5"
     id "maven-publish"
 
     // Apply the brightSPARK Labs plugin for standardisation.
@@ -73,12 +73,12 @@ dependencies {
     testImplementation(
             // Use the awesome Spock testing and specification framework even with Java
             'org.spockframework:spock-core:1.2-groovy-2.5',
-            'junit:junit:4.12',
+            'junit:junit:4.13.2',
             // Allow spock to mock non-interfaces
-            'net.bytebuddy:byte-buddy:1.10.1',
+            'net.bytebuddy:byte-buddy:1.14.4',
 
             // So that we can suppress some spotbugs reports
-            'com.github.spotbugs:spotbugs-annotations:3.1.12',
+            'com.github.spotbugs:spotbugs-annotations:4.7.3',
     )
 
     annotationProcessor(
@@ -108,10 +108,25 @@ sourceSets {
 // GENERATE CODE QUALITY REPORT (via spotbugs)
 // -----------------------------------------------------------------------------
 
-tasks.withType(com.github.spotbugs.SpotBugsTask) {
+spotbugsMain {
     reports {
-        xml.required = false
-        html.required = true
+        html {
+            required = true
+        }
+        xml {
+            required = false
+        }
+    }
+}
+
+spotbugsTest {
+    reports {
+        html {
+            required = true
+        }
+        xml {
+            required = false
+        }
     }
 }
 
@@ -121,7 +136,9 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
 
 jacocoTestReport {
     reports {
-        html.enabled = true
+        html {
+            required = true
+        }
     }
 }
 // -----------------------------------------------------------------------------
