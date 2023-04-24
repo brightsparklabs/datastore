@@ -14,11 +14,8 @@ plugins {
     // Apply the groovy plugin to also add support for Groovy (needed for Spock)
     id 'groovy'
 
-    // Apply the spotbugs plugin for code quality
-    id 'com.github.spotbugs' version '5.0.14'
-
-    // Apply the jacoco plugin for test coverage
-    id 'jacoco'
+    // Apply the brightSPARK Labs plugin for standardisation.
+    id 'com.brightsparklabs.gradle.baseline' version '3.1.0'
 
     id "maven-publish"
 }
@@ -47,18 +44,18 @@ repositories {
 
 dependencies {
     def versions = [
-            immutablesVersion: '2.9.3',
+        immutablesVersion: '2.9.3',
     ]
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     implementation(
             // General
             'com.google.guava:guava:23.0',
-    )
+            )
 
     compileOnly(
             "org.immutables:value:${versions.immutablesVersion}",
-    )
+            )
 
     testImplementation(
             // Use the awesome Spock testing and specification framework even with Java
@@ -69,111 +66,9 @@ dependencies {
 
             // So that we can suppress some spotbugs reports
             'com.github.spotbugs:spotbugs-annotations:4.7.3',
-    )
+            )
 
     annotationProcessor(
             "org.immutables:value:${versions.immutablesVersion}",
-    )
-}
-
-// -----------------------------------------------------------------------------
-// GENERATED CODE CONFIG
-// -----------------------------------------------------------------------------
-
-ext {
-    generatedSourcesDir = 'build/generated/source/apt/main'
-}
-
-dependencies {
-    // We add this so that Immutables will annotate its generated classes with
-    // @SuppressFBWarnings, and thus avoid FindBugs/SpotBugs errors for those generated classes.
-    compileOnly group: 'com.google.code.findbugs', name: 'annotations', version: '3.0.1'
-}
-
-sourceSets {
-    main.java.srcDirs += generatedSourcesDir
-}
-
-// -----------------------------------------------------------------------------
-// GENERATE CODE QUALITY REPORT (via spotbugs)
-// -----------------------------------------------------------------------------
-
-spotbugsMain {
-    reports {
-        html.required = true
-        xml.required = false
-    }
-}
-
-spotbugsTest {
-    reports {
-        html.required = true
-        xml.required = false
-    }
-}
-
-// -----------------------------------------------------------------------------
-// GENERATE CODE COVERAGE REPORT (via jacoco)
-// -----------------------------------------------------------------------------
-
-jacocoTestReport {
-    reports {
-        html.required = true
-    }
-}
-
-// Include javadoc and sources (requirements for publishing to Maven Central)
-task javadocJar(type: Jar) {
-    archiveClassifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-def pomConfig = {
-    name project.name
-    packaging 'jar'
-    description project.description
-    url project.url
-
-    scm {
-        connection project.scm
-        developerConnection project.scm
-        url project.scm
-    }
-
-    licenses {
-        license {
-            name 'MIT License'
-            url 'http://www.opensource.org/licenses/mit-license.php'
-        }
-    }
-
-    developers {
-        developer {
-            id 'brightsparklabs'
-            name 'brightSPARK Labs'
-            email 'enquire@brightsparklabs.com'
-        }
-    }
-}
-
-publishing {
-    publications {
-        Publication(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            groupId project.group
-            artifactId project.name
-            version project.version
-            pom.withXml {
-                def root = asNode()
-                root.children().last() + pomConfig
-            }
-        }
-    }
+            )
 }

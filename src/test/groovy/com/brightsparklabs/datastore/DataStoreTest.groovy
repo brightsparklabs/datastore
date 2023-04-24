@@ -1,7 +1,10 @@
 /*
- * Created by brightSPARK Labs
+ * Maintained by brightSPARK Labs.
  * www.brightsparklabs.com
+ *
+ * Refer to LICENSE at repository root for license details.
  */
+
 package com.brightsparklabs.datastore
 
 import spock.lang.Specification

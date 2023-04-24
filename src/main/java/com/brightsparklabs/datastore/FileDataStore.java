@@ -1,16 +1,19 @@
 /*
- * Created by brightSPARK Labs
+ * Maintained by brightSPARK Labs.
  * www.brightsparklabs.com
+ *
+ * Refer to LICENSE at repository root for license details.
  */
+
 package com.brightsparklabs.datastore;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-import org.immutables.value.Value;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,16 +22,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import org.immutables.value.Value;
 
 /**
  * A {@link DataStore} which stores data in files.
  *
  * @author brightSPARK Labs
  */
-public class FileDataStore extends AbstractDataStore
-{
+public class FileDataStore extends AbstractDataStore {
     // -------------------------------------------------------------------------
     // CONSTANTS
     // -------------------------------------------------------------------------
@@ -40,8 +41,8 @@ public class FileDataStore extends AbstractDataStore
     private static final Splitter ID_SPLITTER = Splitter.fixedLength(DIR_LEVEL_CHARS);
 
     /** The regex used to verify the format of a UUID */
-    private static final String UUID_REGEX
-            = "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$";
+    private static final String UUID_REGEX =
+            "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$";
 
     // -------------------------------------------------------------------------
     // INSTANCE VARIABLES
@@ -57,11 +58,9 @@ public class FileDataStore extends AbstractDataStore
     /**
      * Creates a new instance from the supplied configuration.
      *
-     * @param configuration
-     *         Configuration for the store.
+     * @param configuration Configuration for the store.
      */
-    public FileDataStore(final Configuration configuration)
-    {
+    public FileDataStore(final Configuration configuration) {
         this.configuration = configuration;
     }
 
@@ -72,24 +71,20 @@ public class FileDataStore extends AbstractDataStore
     /**
      * Returns the data in the file corresponding to the specified id.
      *
-     * @param id
-     *         Unique identifier of the file to retrieve.
-     *
+     * @param id Unique identifier of the file to retrieve.
      * @return The data in the file corresponding to the specified id.
      */
     @Override
-    public ByteSource get(final String id) throws FileNotFoundException
-    {
+    public ByteSource get(final String id) throws FileNotFoundException {
         Objects.requireNonNull(id);
         checkArgument(!id.isEmpty(), "Id must not be empty");
 
         // Get file path from UUID
         final Path filePath = getPath(id);
 
-        if (!java.nio.file.Files.exists(filePath))
-        {
-            throw new FileNotFoundException(String.format("The id [%s] does not match any files",
-                    filePath.toString()));
+        if (!java.nio.file.Files.exists(filePath)) {
+            throw new FileNotFoundException(
+                    String.format("The id [%s] does not match any files", filePath.toString()));
         }
 
         return Files.asByteSource(filePath.toFile());
@@ -98,13 +93,10 @@ public class FileDataStore extends AbstractDataStore
     /**
      * Stores the data from the specified source into the store.
      *
-     * @param source
-     *         Source to read data from.
-     *
+     * @param source Source to read data from.
      * @return Unique identifier for retrieving the data via {@link #get(String)}.
      */
-    public String put(final ByteSource source) throws IOException
-    {
+    public String put(final ByteSource source) throws IOException {
         Objects.requireNonNull(source);
 
         // Generate UUID and associated path
@@ -113,8 +105,7 @@ public class FileDataStore extends AbstractDataStore
 
         // Create all parent directories
         final Path parent = destinationFile.getParent();
-        if (parent != null)
-        {
+        if (parent != null) {
             java.nio.file.Files.createDirectories(parent);
         }
 
@@ -131,20 +122,16 @@ public class FileDataStore extends AbstractDataStore
     /**
      * Returns the file corresponding to the specified id.
      *
-     * @param id
-     *         Unique identifier of the file to retrieve.
-     *
+     * @param id Unique identifier of the file to retrieve.
      * @return The file corresponding to the specified id.
      */
-    public Path getPath(String id)
-    {
+    public Path getPath(String id) {
         Objects.requireNonNull(id);
         checkArgument(!id.isEmpty(), "Id must not be empty");
 
-        if (!id.matches(UUID_REGEX))
-        {
-            throw new IllegalArgumentException(String.format("Supplied id [%s] is not a valid UUID",
-                    id));
+        if (!id.matches(UUID_REGEX)) {
+            throw new IllegalArgumentException(
+                    String.format("Supplied id [%s] is not a valid UUID", id));
         }
 
         // Get configuration
@@ -165,10 +152,13 @@ public class FileDataStore extends AbstractDataStore
     // INNER CLASSES
     // -------------------------------------------------------------------------
 
+    /**
+     * Configuration class for creating FileDataStores TODO: Write proper documentation for the
+     * class.
+     */
     @Value.Immutable
     @Value.Style(typeImmutable = "ImmutableFileDataStore*")
-    public static abstract class Configuration
-    {
+    public abstract static class Configuration {
         // ---------------------------------------------------------------------
         // CONSTANTS
         // ---------------------------------------------------------------------
@@ -190,8 +180,7 @@ public class FileDataStore extends AbstractDataStore
          * @return The number of directory levels to use for nesting files.
          */
         @Value.Default
-        int getLevels()
-        {
+        int getLevels() {
             return DEFAULT_LEVELS;
         }
 
@@ -207,10 +196,10 @@ public class FileDataStore extends AbstractDataStore
          * and greater than 0.
          */
         @Value.Check
-        protected void checkDirLevel()
-        {
+        protected void checkDirLevel() {
             final int levels = getLevels();
-            Preconditions.checkState((0 < levels) && (levels <= MAX_LEVELS),
+            Preconditions.checkState(
+                    (0 < levels) && (levels <= MAX_LEVELS),
                     "Number of directory levels must be between [0-" + MAX_LEVELS + "]");
         }
     }
