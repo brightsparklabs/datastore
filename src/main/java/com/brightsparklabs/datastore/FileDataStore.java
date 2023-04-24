@@ -96,6 +96,7 @@ public class FileDataStore extends AbstractDataStore {
      * @param source Source to read data from.
      * @return Unique identifier for retrieving the data via {@link #get(String)}.
      */
+    @Override
     public String put(final ByteSource source) throws IOException {
         Objects.requireNonNull(source);
 

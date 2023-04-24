@@ -59,13 +59,10 @@ dependencies {
 
     testImplementation(
             // Use the awesome Spock testing and specification framework even with Java
-            'org.spockframework:spock-core:0.3',
+            'org.spockframework:spock-core:2.4-M1-groovy-4.0',
             'junit:junit:4.13.2',
             // Allow spock to mock non-interfaces
             'net.bytebuddy:byte-buddy:1.14.4',
-
-            // So that we can suppress some spotbugs reports
-            'com.github.spotbugs:spotbugs-annotations:4.7.3',
             )
 
     annotationProcessor(
