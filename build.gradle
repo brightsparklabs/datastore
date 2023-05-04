@@ -14,15 +14,20 @@ buildscript {
         }
     }
     dependencies {
+        /*
+         * The Nexus Publish Plugin can only be applied to the root project.
+         * Add the plugin dependency here rather than in the plugins block
+         * to allow us to conditionally apply it.
+         */
         classpath 'io.github.gradle-nexus:publish-plugin:1.3.0'
     }
 }
 
 plugins {
-    // Apply the java-library plugin to add support for Java Library
+    // Apply the java-library plugin to add support for Java Library.
     id 'java-library'
 
-    // Apply the groovy plugin to also add support for Groovy (needed for Spock)
+    // Apply the groovy plugin to also add support for Groovy (needed for Spock).
     id 'groovy'
 
     // Apply the brightSPARK Labs plugin for standardisation.
@@ -87,7 +92,7 @@ dependencies {
     testImplementation(
             // Use the awesome Spock testing and specification framework even with Java
             'org.spockframework:spock-core:2.4-M1-groovy-4.0',
-            'junit:junit:4.13.2',
+            'org.junit.jupiter:junit-jupiter-api:5.9.3',
             // Allow spock to mock non-interfaces
             'net.bytebuddy:byte-buddy:1.14.4',
             )
