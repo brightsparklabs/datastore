@@ -1,6 +1,6 @@
 # Datastore
 
-[ ![Download](https://api.bintray.com/packages/brightsparklabs/maven/datastore/images/download.svg) ](https://bintray.com/brightsparklabs/maven/datastore/_latestVersion)
+[![Build Status](https://github.com/brightsparklabs/datastore/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/brightsparklabs/datastore/actions/workflows/unit_tests.yml)
 
 A standardised means to store large amounts of files into a store.
 
