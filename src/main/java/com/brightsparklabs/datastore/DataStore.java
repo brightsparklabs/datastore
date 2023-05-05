@@ -1,6 +1,8 @@
 /*
- * Created by brightSPARK Labs
+ * Maintained by brightSPARK Labs.
  * www.brightsparklabs.com
+ *
+ * Refer to LICENSE at repository root for license details.
  */
 
 package com.brightsparklabs.datastore;
@@ -17,8 +19,7 @@ import java.nio.file.Path;
  *
  * @author brightSPARK Labs
  */
-public interface DataStore
-{
+public interface DataStore {
     // -------------------------------------------------------------------------
     // CONSTANTS
     // -------------------------------------------------------------------------
@@ -34,43 +35,36 @@ public interface DataStore
     /**
      * Returns the data in the file corresponding to the specified id.
      *
-     * @param id
-     *         Unique identifier of the file to retrieve.
-     *
+     * @param id Unique identifier of the file to retrieve.
      * @return The data in the file corresponding to the specified id.
-     *
-     * @throws FileNotFoundException
-     *         If not data can be found for the specified id.
+     * @throws FileNotFoundException If not data can be found for the specified id.
      */
     ByteSource get(String id) throws FileNotFoundException;
 
     /**
      * Stores the data from the specified source into the store.
      *
-     * @param source
-     *         Source to read data from.
-     *
+     * @param source Source to read data from.
      * @return Unique identifier for retrieving the data via {@link #get(String)}.
+     * @throws IOException If the data could not be put into the store.
      */
     String put(ByteSource source) throws IOException;
 
     /**
      * Stores the data from the specified file into the store.
      *
-     * @param file
-     *         File to store.
-     *
+     * @param file File to store.
      * @return Unique identifier for retrieving the data via {@link #get(String)}.
+     * @throws IOException If the data could not be put into the store.
      */
     String put(Path file) throws IOException;
 
     /**
      * Stores the data from the specified file into the store.
      *
-     * @param file
-     *         File to store.
-     *
+     * @param file File to store.
      * @return Unique identifier for retrieving the data via {@link #get(String)}.
+     * @throws IOException If the data could not be put into the store.
      */
     String put(File file) throws IOException;
 }
