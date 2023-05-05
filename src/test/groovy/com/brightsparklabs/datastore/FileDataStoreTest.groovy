@@ -1,6 +1,8 @@
 /*
- * Created by brightSPARK Labs
+ * Maintained by brightSPARK Labs.
  * www.brightsparklabs.com
+ *
+ * Refer to LICENSE at repository root for license details.
  */
 
 package com.brightsparklabs.datastore
@@ -37,7 +39,24 @@ class FileDataStoreTest extends Specification {
         checkExpectedFile(expectedFile, expectedContents, getResult)
 
         where:
-        level << [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        level << [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+        ]
     }
 
     def "get FileNotFound"() {
@@ -156,7 +175,13 @@ class FileDataStoreTest extends Specification {
         ex.message == "Number of directory levels must be between [0-16]"
 
         where:
-        levels << [Integer.MIN_VALUE, -1, 0, 17, Integer.MAX_VALUE]
+        levels << [
+            Integer.MIN_VALUE,
+            -1,
+            0,
+            17,
+            Integer.MAX_VALUE
+        ]
     }
 
     // -------------------------------------------------------------------------

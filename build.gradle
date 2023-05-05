@@ -8,29 +8,29 @@
 // -----------------------------------------------------------------------------
 
 plugins {
-    // Apply the java-library plugin to add support for Java Library
+    // Apply the java-library plugin to add support for Java Library.
     id 'java-library'
 
-    // Apply the groovy plugin to also add support for Groovy (needed for Spock)
+    // Apply the groovy plugin to also add support for Groovy (needed for Spock).
     id 'groovy'
 
-    // Apply the spotbugs plugin for code quality
-    id 'com.github.spotbugs' version '2.0.0'
+    // Apply the brightSPARK Labs plugin for standardisation.
+    id 'com.brightsparklabs.gradle.baseline' version '4.0.0'
 
-    // Apply the jacoco plugin for test coverage
-    id 'jacoco'
+    // -----------------------------------------------------------------------------
+    // PUBLISHING
+    // -----------------------------------------------------------------------------
 
-    // Apply the annotation processing plugins
-    id "net.ltgt.apt" version "0.21"
-    id "net.ltgt.apt-idea" version "0.21"
+    id 'maven-publish'
+    // Maven Central requires artifacts to be signed.
+    id 'signing'
 
-    // Apply bintray plugin for publishing artifacts
-    id "com.jfrog.bintray" version "1.8.4"
-    id "maven-publish"
+    // Maven Central publishing needs to be fed through Nexus.
+    id 'io.github.gradle-nexus.publish-plugin' version '1.3.0'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
 
 // -----------------------------------------------------------------------------
 // PROJECT IDENTIFICATION
@@ -38,165 +38,125 @@ targetCompatibility = 1.8
 
 project.description = 'Library for storing/retrieving data by id into a backing store'
 project.ext.url     = 'https://github.com/brightsparklabs/datastore'
-project.ext.scm     = 'https://github.com/brightsparklabs/datastore.git'
-project.group       = 'com.brightsparklabs'
-project.version     = 'git describe --always --dirty'.execute().text.trim()
+project.ext.scm     = 'scm:git@github.com:brightsparklabs/datastore.git'
 
 // -----------------------------------------------------------------------------
 // REPOSITORIES/DEPENDENCIES
 // -----------------------------------------------------------------------------
 
 repositories {
-    // Use jcenter for resolving dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    // Use mavenCentral for resolving dependencies.
+    mavenCentral()
 }
 
 dependencies {
     def versions = [
-            immutablesVersion: '2.7.4',
+        immutablesVersion: '2.9.3',
     ]
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     implementation(
             // General
-            'com.google.guava:guava:27.0.1-jre',
-    )
+            'com.google.guava:guava:23.0',
+            )
 
     compileOnly(
             "org.immutables:value:${versions.immutablesVersion}",
-    )
+            )
 
     testImplementation(
             // Use the awesome Spock testing and specification framework even with Java
-            'org.spockframework:spock-core:1.2-groovy-2.5',
-            'junit:junit:4.12',
+            'org.spockframework:spock-core:2.4-M1-groovy-4.0',
+            'org.junit.jupiter:junit-jupiter-api:5.9.3',
             // Allow spock to mock non-interfaces
-            'net.bytebuddy:byte-buddy:1.10.1',
-
-            // So that we can suppress some spotbugs reports
-            'com.github.spotbugs:spotbugs-annotations:3.1.12',
-    )
+            'net.bytebuddy:byte-buddy:1.14.4',
+            )
 
     annotationProcessor(
             "org.immutables:value:${versions.immutablesVersion}",
-    )
+            )
 }
 
 // -----------------------------------------------------------------------------
-// GENERATED CODE CONFIG
+// SETUP ARTIFACTS FOR PUBLISHING
 // -----------------------------------------------------------------------------
 
-ext {
-    generatedSourcesDir = 'build/generated/source/apt/main'
-}
-
-dependencies {
-    // We add this so that Immutables will annotate its generated classes with
-    // @SuppressFBWarnings, and thus avoid FindBugs/SpotBugs errors for those generated classes.
-    compileOnly group: 'com.google.code.findbugs', name: 'annotations', version: '3.0.1'
-}
-
-sourceSets {
-    main.java.srcDirs += generatedSourcesDir
-}
-
-// -----------------------------------------------------------------------------
-// GENERATE CODE QUALITY REPORT (via spotbugs)
-// -----------------------------------------------------------------------------
-
-tasks.withType(com.github.spotbugs.SpotBugsTask) {
-    reports {
-        xml.enabled = false
-        html.enabled = true
-    }
-}
-
-// -----------------------------------------------------------------------------
-// GENERATE CODE COVERAGE REPORT (via jacoco)
-// -----------------------------------------------------------------------------
-
-jacocoTestReport {
-    reports {
-        html.enabled = true
-    }
-}
-// -----------------------------------------------------------------------------
-// PUBLISH ARTIFACTS (via bintray)
-// -----------------------------------------------------------------------------
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['Publication']
-    override = true
-    publish = true
-    pkg {
-        repo = 'maven'
-        name = project.name
-        userOrg = 'brightsparklabs'
-        licenses = ['MIT']
-        vcsUrl = project.ext.url
-        version {
-            name = project.version
-            vcsTag = project.version
-            released = new Date()
-        }
-    }
-}
-
-// Include javadoc and sources (requirements for publishing to Maven Central)
-task javadocJar(type: Jar) {
-    archiveClassifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-def pomConfig = {
-    name project.name
-    packaging 'jar'
-    description project.description
-    url project.url
-
-    scm {
-        connection project.scm
-        developerConnection project.scm
-        url project.scm
-    }
-
-    licenses {
-        license {
-            name 'MIT License'
-            url 'http://www.opensource.org/licenses/mit-license.php'
-        }
-    }
-
-    developers {
-        developer {
-            id 'brightsparklabs'
-            name 'brightSPARK Labs'
-            email 'enquire@brightsparklabs.com'
-        }
-    }
+// Maven Central requires javadoc and sources.
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
     publications {
-        Publication(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
+        mavenJava(MavenPublication) {
             groupId project.group
             artifactId project.name
             version project.version
-            pom.withXml {
-                def root = asNode()
-                root.children().last() + pomConfig
+            from components.java
+
+            // Maven Central requires specific POM attributes.
+            pom {
+                name = project.name
+                description = project.description
+                url = project.url
+
+                scm {
+                    connection = project.scm
+                    developerConnection = project.scm
+                    url = project.scm
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'brightsparklabs'
+                        name = 'brightSPARK Labs'
+                        email = 'enquire@brightsparklabs.com'
+                    }
+                }
             }
         }
     }
+}
+
+// Maven Central requires signed artifacts.
+signing {
+    def signingKey = findProperty("signingKey")
+    def signingPassword = findProperty("signingPassword")
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.mavenJava
+
+    // Only require signing when publishing (otherwise normal builds would need GPG keys).
+    required { gradle.taskGraph.hasTask("publishToSonatype") }
+}
+
+// -----------------------------------------------------------------------------
+// PUBLISH ARTIFACTS (via nexus)
+// -----------------------------------------------------------------------------
+
+nexusPublishing {
+    repositories {
+        // Credentials default to:
+        // - Property `sonatypeUsername` or ENV variable `ORG_GRADLE_PROJECT_sonatypeUsername`.
+        // - Property `sonatypePassword` or ENV variable ORG_GRADLE_PROJECT_sonatypePassword`.
+        sonatype()
+    }
+}
+
+task prePublishToMavenCentral {
+    group 'brightSPARK Labs - Maven Central Publishing'
+    description 'Stages the release on Sonatype ready for publishing to Maven Central.'
+    dependsOn 'publishToSonatype', 'closeSonatypeStagingRepository'
+}
+task publishToMavenCentral {
+    group 'brightSPARK Labs - Maven Central Publishing'
+    description 'Publishes the release to Maven Central.'
+    dependsOn 'publishToSonatype', 'closeAndReleaseSonatypeStagingRepository'
 }
