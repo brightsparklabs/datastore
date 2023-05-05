@@ -1,6 +1,7 @@
 # Datastore
 
 [![Build Status](https://github.com/brightsparklabs/datastore/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/brightsparklabs/datastore/actions/workflows/unit_tests.yml)
+[![Maven](https://img.shields.io/maven-central/v/com.brightsparklabs/datastore)](https://search.maven.org/artifact/com.brightsparklabs/datastore)
 
 A standardised means to store large amounts of files into a store.
 
