@@ -4,6 +4,8 @@
 
 A standardised means to store large amounts of files into a store.
 
+**NOTE: This plugin requires JDK 17 or above.**
+
 # Usage
 
 ```java
