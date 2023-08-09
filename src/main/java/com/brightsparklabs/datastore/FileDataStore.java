@@ -14,9 +14,6 @@ import com.google.common.base.Splitter;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-
-import org.immutables.value.Value;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.immutables.value.Value;
 
 /**
  * A {@link DataStore} which stores data in files.
