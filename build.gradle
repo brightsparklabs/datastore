@@ -51,7 +51,7 @@ repositories {
 
 dependencies {
     def versions = [
-        immutablesVersion: '2.9.3',
+        immutablesVersion: '2.10.0',
     ]
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
