@@ -15,7 +15,7 @@ plugins {
     id 'groovy'
 
     // Apply the brightSPARK Labs plugin for standardisation.
-    id 'com.brightsparklabs.gradle.baseline' version '4.2.0'
+    id 'com.brightsparklabs.gradle.baseline' version '4.4.0'
 
     // -----------------------------------------------------------------------------
     // PUBLISHING
