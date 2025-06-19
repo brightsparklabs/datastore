@@ -201,7 +201,7 @@ jreleaser {
          * Set via env var `JRELEASER_GPG_PASSPHRASE`.
          *
          * NOTE: The name of the project property we set this to is derived from our GitHub
-         * publishing workflow, which sets the project property using an enfironment variable.
+         * publishing workflow, which sets the project property using an environment variable.
          * NOTE: This raises an error if left blank, however this is a bug that should be fixed in
          * the 1.19.0 release. See https://github.com/jreleaser/jreleaser/issues/1883.
          */
@@ -213,7 +213,7 @@ jreleaser {
          * Set via env var `JRELEASER_GPG_SECRET_KEY`.
          *
          * NOTE: The name of the project property we set this to is derived from our GitHub
-         * publishing workflow, which sets the project property using an enfironment variable.
+         * publishing workflow, which sets the project property using an environment variable.
          * NOTE: If set to a non-empty malformed value, signing will fail with "Unexpected error".
          */
         secretKey = findProperty("signingKey")
@@ -246,7 +246,7 @@ jreleaser {
                      *
                      * NOTE: The name of the project property we set this to is derived from our
                      * GitHub publishing workflow, which sets the project property using an
-                     * enfironment variable.
+                     * environment variable.
                      */
                     username = findProperty("sonatypeUsername")
 
@@ -256,7 +256,7 @@ jreleaser {
                      *
                      * NOTE: The name of the project property we set this to is derived from our
                      * GitHub publishing workflow, which sets the project property using an
-                     * enfironment variable.
+                     * environment variable.
                      */
                     password = findProperty("sonatypePassword")
 
