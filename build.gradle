@@ -248,7 +248,7 @@ jreleaser {
                      * GitHub publishing workflow, which sets the project property using an
                      * environment variable.
                      */
-                    username = findProperty("sonatypeUsername")
+                    username = findProperty("mavenCentralUsername")
 
                     /**
                      * Password for login into the MAVENCENTRAL service.
@@ -258,7 +258,7 @@ jreleaser {
                      * GitHub publishing workflow, which sets the project property using an
                      * environment variable.
                      */
-                    password = findProperty("sonatypePassword")
+                    password = findProperty("mavenCentralPassword")
 
                     /**
                      * The authorization method to use.
