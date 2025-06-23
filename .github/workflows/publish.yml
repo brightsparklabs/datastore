@@ -31,7 +31,7 @@ jobs:
       - name: Publish package
         run: |
           mkdir -p ~/.gradle
-          ./gradlew -i publishToMavenCentral
+          ./gradlew -i publishToMavenCentral --stacktrace
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.PGP_SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.PGP_SIGNING_PASSWORD }}
